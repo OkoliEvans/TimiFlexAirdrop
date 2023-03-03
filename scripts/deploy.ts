@@ -23,8 +23,8 @@ type AirdropInfo = {
   const outputFilePath = path.join(outputDirPath, 'result.json');
   const fileContent = fs.readFileSync(csvFilePath, { encoding: 'utf-8' });
   let leaves: string[] = [];
-  let merkleLeaves: Bytes[] = [];
-  let merkleProof: Bytes[] = [];
+  let merkleLeaves = [];
+  let merkleProof = [];
 
   parse(fileContent, {
     delimiter: ',',
@@ -68,33 +68,37 @@ type AirdropInfo = {
   const root = tree.getRoot().toString('hex');
   
               /// GET PROOF  ///
-  let leaf1 = "0x1f480e4c9d75a29f01ac782acc15a74ca1c3bfc4914f85f0950ca5e506038669";
-  let proof = tree.getProof(leaf1);
+  // let leaf1 = "0x1f480e4c9d75a29f01ac782acc15a74ca1c3bfc4914f85f0950ca5e506038669";
+  // let proof = tree.getProof(leaf1);
 
   let listXf = JSON.parse(JSONLeaves);
   for (let i = 0; i < listXf.length; i++) {
     merkleLeaves.push(listXf[i]);
   }
-console.log(`Merkle proofs: ${merkleLeaves}`);
 
+console.log(merkleLeaves);
 
-  for (let i = 0; i < merkleLeaves.length; i++){
-    let iProof = tree.getProof(merkleLeaves[i]);
-  }
   
+
+
+
+
+
+
+
   //const verified = tree.verify(proof, leaf1, root);
   //ROOT for LEAF1 = e1f3dd2e3ff6fb5c04a9347b0ae112d027f12e7ca2aa78c7eede2b8630032e7c
   
   ///////////////////////  DEPLOY CONTRACTS   ////////////////////////////////////
   const [owner, account1] = await ethers.getSigners();
-  const iOwner = owner.address;
+  // const iOwner = owner.address;
 
-  /////////////////////  DEPLOY TMX TOKEN  ///////////////////////
-  const Token = await ethers.getContractFactory("Token");
-  const token = await Token.deploy(iOwner,1000000);
-  await token.deployed();
-  const TMX = token.address;
-  console.log(`TMX deployed to: ${TMX}`);
+  // /////////////////////  DEPLOY TMX TOKEN  ///////////////////////
+  // const Token = await ethers.getContractFactory("Token");
+  // const token = await Token.deploy(iOwner,1000000);
+  // await token.deployed();
+  // const TMX = token.address;
+  // console.log(`TMX deployed to: ${TMX}`);
 
   ///////////////////   DEPLOY AIRDROP CONTRACT  /////////////////
   // const AirdropContract = await ethers.getContractFactory("Airdrop");
