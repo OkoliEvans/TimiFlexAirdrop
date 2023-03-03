@@ -2,7 +2,6 @@
 pragma solidity ^0.8.10;
 
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
-import './IToken.sol';
 import './token.sol';
 
 contract Airdrop {

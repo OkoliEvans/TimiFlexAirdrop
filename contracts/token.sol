@@ -6,9 +6,9 @@ import '@openzeppelin/contracts/token/ERC20/ERC20.sol';
 contract Token is ERC20 {
 
     address Owner;
-    constructor() ERC20("TimiFlex","TMX") {
+    constructor(address _to, uint256 _amount) ERC20("TimiFlex","TMX") {
         Owner = msg.sender;
-        _mint(address(this), 1_000_000);
+        _mint(_to, _amount);
     }
 
 }
