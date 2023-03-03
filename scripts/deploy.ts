@@ -10,7 +10,6 @@ import { parse } from 'csv-parse';
 
 async function main() {
   
-
   //////////////////////  GET CSV FILE  /////////////////////////
 type AirdropInfo = {
   address: string;
@@ -24,6 +23,8 @@ type AirdropInfo = {
   const outputFilePath = path.join(outputDirPath, 'result.json');
   const fileContent = fs.readFileSync(csvFilePath, { encoding: 'utf-8' });
   let leaves: string[] = [];
+  let merkleLeaves: Bytes[] = [];
+  let merkleProof: Bytes[] = [];
 
   parse(fileContent, {
     delimiter: ',',
@@ -55,7 +56,7 @@ type AirdropInfo = {
     const address = jsonFile[i].address;
     const amount = jsonFile[i].amount;
 
-    let leaf = ethers.utils.solidityKeccak256(["address", "uint256"],[address, amount]);
+    let leaf = ethers.utils.solidityKeccak256(["address","uint256"],[address,amount]);
     leaves.push(leaf);
   }
 
@@ -68,14 +69,45 @@ type AirdropInfo = {
   
               /// GET PROOF  ///
   let leaf1 = "0x1f480e4c9d75a29f01ac782acc15a74ca1c3bfc4914f85f0950ca5e506038669";
-  const proof = tree.getProof(leaf1);
-  const verified = tree.verify(proof, leaf1, root);
-  
-  //ROOT = e1f3dd2e3ff6fb5c04a9347b0ae112d027f12e7ca2aa78c7eede2b8630032e7c
-  
-  
+  let proof = tree.getProof(leaf1);
+
+  let listXf = JSON.parse(JSONLeaves);
+  for (let i = 0; i < listXf.length; i++) {
+    merkleLeaves.push(listXf[i]);
+  }
+console.log(`Merkle proofs: ${merkleLeaves}`);
 
 
+  for (let i = 0; i < merkleLeaves.length; i++){
+    let iProof = tree.getProof(merkleLeaves[i]);
+  }
+  
+  //const verified = tree.verify(proof, leaf1, root);
+  //ROOT for LEAF1 = e1f3dd2e3ff6fb5c04a9347b0ae112d027f12e7ca2aa78c7eede2b8630032e7c
+  
+  ///////////////////////  DEPLOY CONTRACTS   ////////////////////////////////////
+  const [owner, account1] = await ethers.getSigners();
+  const iOwner = owner.address;
+
+  /////////////////////  DEPLOY TMX TOKEN  ///////////////////////
+  const Token = await ethers.getContractFactory("Token");
+  const token = await Token.deploy(iOwner,1000000);
+  await token.deployed();
+  const TMX = token.address;
+  console.log(`TMX deployed to: ${TMX}`);
+
+  ///////////////////   DEPLOY AIRDROP CONTRACT  /////////////////
+  // const AirdropContract = await ethers.getContractFactory("Airdrop");
+  // const airdrop = await AirdropContract.deploy(
+  //   TMX,
+  //   root,
+    
+  // );
+  
+  // await airdrop.deployed();
+  // const AirdropContractAddr = airdrop.address;
+  // console.log(AirdropContractAddr);
+  
 }
 
 
